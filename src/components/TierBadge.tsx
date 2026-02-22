@@ -11,7 +11,7 @@ export function TierBadge({ tier }: TierBadgeProps) {
     return (
         <span className={`tier-badge tier-badge--${tier}`}>
             <Lock size={10} />
-            {tier === 'pro' ? 'DEGEN' : 'INST'}
+            {tier === 'pro' ? '💡' : 'INST'}
         </span>
     );
 }

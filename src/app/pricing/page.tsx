@@ -25,11 +25,11 @@ const tiers = [
         ],
     },
     {
-        name: 'Degen',
+        name: 'Coin Sense',
         price: '$29',
         period: '/month (less than your last rug pull)',
         icon: Zap,
-        description: 'You\'ve accepted who you are. Might as well have good data while you YOLO your savings into dog coins.',
+        description: 'You\'ve accepted who you are. Might as well have good data while you YOLO your savings into coins you found on TikTok.',
         gradient: 'linear-gradient(135deg, #f59e0b, #f97316)',
         popular: true,
         features: [
@@ -115,7 +115,7 @@ export default function PricingPage() {
                                     }
                                 }}
                             >
-                                {tier.name === 'Normie' ? 'Start Lurking (Free)' : 'Go Full Degen'}
+                                {tier.name === 'Normie' ? 'Start Lurking (Free)' : 'Get Coin Sense'}
                             </button>
                         </div>
                     );
