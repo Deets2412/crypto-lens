@@ -1,0 +1,46 @@
+# Crypto Lens: Functionality & Feature Summary
+*Prepared for Marketing Plan Development*
+
+## Core Value Proposition
+Crypto Lens is an automated, data-driven crypto intelligence platform that acts as a personal investment analyst. It aggregates overnight crypto news, analyzes it for investment signals, and pairs it with real-time fundamental and technical market data. The final output provides users with actionable, algorithmically scored investment recommendations.
+
+---
+
+## 1. Dashboard (The Command Center)
+The homepage serves as a quick, overnight intelligence briefing.
+- **Real-Time Market Overview:** Displays critical global metrics: Total Market Cap, 24h Volume, BTC Dominance, and Active Coins.
+- **Top Picks Widget:** Showcases the platform's top 3 algorithmic investment recommendations out of the top 100 coins, complete with a visual Confidence Gauge, risk ratings, and brief bullet points explaining the rationale.
+- **Top Gainers (24h):** A quick view of the top 5 highest appreciating cryptocurrencies over the last 24 hours.
+- **Latest Headlines:** A feed of the latest news articles, tagged instantly with the platform's internal sentiment scoring (Bullish, Bearish, or Neutral).
+- **7-Day Trend Sparklines:** Quick, visual mini-charts showing the 7-day price trajectory of the top 8 cryptocurrencies.
+
+## 2. News & Signals Engine
+A dedicated news aggregator that doesn't just display news—it analyzes it.
+- **Algorithmic Sentiment Scoring:** Connects to the CryptoCompare API to pull the latest news. A proprietary algorithm scans headlines and body text for specific bullish/bearish keywords to assign a sentiment score (e.g., tags articles with "surge" or "adoption" as Bullish).
+- **Signal Summary Dashboard:** A top-level tally showing the total number of Bullish, Bearish, and Neutral signals identified in the latest news cycle.
+- **Smart Filtering & Search:** Users can filter the news feed by Sentiment (Bullish/Bearish) or search for specific projects to see how the media is covering them.
+- **Coin Entity Extraction:** Automatically detects which specific coins (e.g., BTC, SOL, ETH) are mentioned in an article and tags them on the news card.
+
+## 3. Professional Investment Screener
+A highly granular screening tool that allows users to evaluate the top 100 cryptocurrencies using metrics traditionally reserved for equity fund managers.
+- **Comprehensive Data Table:** Displays Price, 24h Change, 7d Change, Market Cap, 24h Volume, Volume-to-Market-Cap Ratio, Distance from All-Time High (ATH), and Supply Ratio. Includes a 7d sparkline chart for every coin.
+- **Advanced Filtering:** Users can set minimum thresholds for Market Cap, Volume, and 24h Price Change to narrow down the field.
+- **Proprietary Dual-Scoring System:**
+  - **Fundamental Score (40% weight):** Rates a coin based on its market cap rank, volume-to-market-cap ratio (indicating active trading interest), and supply scarcity (circulating vs. max supply).
+  - **Technical Score (60% weight):** Rates a coin based on short-term momentum (24h/7d price change) and its distance from ATH (identifying breakouts or deep-value recovery plays).
+- **Composite Score:** Blends the fundamental and technical scores into a final 0-100 rating, color-coded for quick scanning (Green for top tier, Red for lowest tier).
+
+## 4. Algorithmic Recommendations Page
+The "crown jewel" of the platform that synthesizes all data into an actionable format.
+- **The Top 3 Picks:** Highlights the three heavily vetted coins with the highest Composite Scores.
+- **News Sentiment Boost:** The base Composite Score is dynamically adjusted (±5 points per signal) if there are active bullish or bearish news articles mentioning that specific coin, ensuring recommendations react to real-time events.
+- **Automated Reasoning Generation:** The system algorithmically generates plain-English bullet points explaining *why* a coin was recommended (e.g., "Trading 65% below ATH — undervalued potential", "High trading activity", or "2 bullish news signals detected").
+- **Risk Categorization:** Automatically assigns a "Low", "Medium", or "High" risk rating based on the coin's overall market cap size and current 24h volatility.
+
+---
+
+## Data Architecture & Technology (For Marketers)
+When speaking to the technical robustness of the platform:
+- **Data Providers:** Integrates with institutional-grade, real-time APIs (CoinGecko for market data and CryptoCompare for news feeds).
+- **Scoring Engine:** The logic is fully objective and mathematical, stripping away human bias from the investment discovery process.
+- **Real-Time Responsiveness:** The application dynamically recalculates scores and recommendations based on the latest available market data caches.
