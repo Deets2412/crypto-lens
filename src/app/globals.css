@@ -2102,3 +2102,257 @@ a:hover {
     border-color: rgba(244, 63, 94, 0.4);
   }
 }
+
+/* ============================================================
+   MOBILE RESPONSIVENESS
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* ---- Typography ---- */
+  .page-title {
+    font-size: 1.75rem !important;
+  }
+
+  .page-subtitle {
+    font-size: 0.85rem !important;
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+
+  /* ---- Header Ticker ---- */
+  .header-ticker {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    max-width: calc(100vw - 140px);
+  }
+
+  .header-ticker::-webkit-scrollbar {
+    display: none;
+  }
+
+  .header {
+    padding: 8px 12px;
+  }
+
+  .header-subscribe-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  /* ---- Main Content ---- */
+  .main-content {
+    padding: 16px 12px !important;
+  }
+
+  /* ---- Stats Grid ---- */
+  .stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+
+  .stat-card {
+    padding: 14px !important;
+  }
+
+  .stat-value {
+    font-size: 1.3rem !important;
+  }
+
+  /* ---- Section Header Row ---- */
+  .section-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* ---- Toggle Group ---- */
+  .toggle-group {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .toggle-group-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  /* ---- Rec Cards Grid ---- */
+  .rec-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ---- Two-Column Layouts ---- */
+  div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ---- Casino Grid ---- */
+  .casino-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .casino-preview-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ---- Pricing Grid ---- */
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    max-width: 100% !important;
+  }
+
+  .pricing-card {
+    padding: 24px;
+  }
+
+  .pricing-amount {
+    font-size: 28px;
+  }
+
+  .pricing-popular-badge {
+    font-size: 10px;
+    padding: 3px 10px;
+  }
+
+  /* ---- Coin Modal ---- */
+  .coin-modal-backdrop {
+    padding: 8px;
+    align-items: flex-end;
+  }
+
+  .coin-modal {
+    padding: 20px;
+    max-height: 95vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .coin-modal-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .coin-modal-price-block {
+    text-align: left;
+  }
+
+  .coin-modal-price {
+    font-size: 22px;
+  }
+
+  .coin-modal-name {
+    font-size: 20px;
+  }
+
+  .coin-modal-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .coin-modal-bs-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .coin-modal-bs-factors {
+    min-width: unset;
+  }
+
+  /* ---- Real Talk ---- */
+  .real-talk-card {
+    grid-template-columns: 1fr !important;
+  }
+
+  .real-talk-divider {
+    width: 100% !important;
+    height: 1px !important;
+    flex-direction: row !important;
+  }
+
+  .real-talk-panel {
+    padding: 16px;
+  }
+
+  .real-talk-text {
+    font-size: 12px;
+  }
+
+  /* ---- Lead Modal ---- */
+  .lead-modal {
+    padding: 24px;
+  }
+
+  .lead-modal-title {
+    font-size: 18px;
+  }
+
+  /* ---- Lead Banner ---- */
+  .lead-banner-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .lead-banner-text {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* ---- Compact Items ---- */
+  .mini-chart-card {
+    padding: 10px 12px !important;
+  }
+
+  .casino-card-mini {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* ---- Casino Warning ---- */
+  .casino-warning {
+    font-size: 12px;
+    padding: 12px 14px;
+  }
+
+  /* ---- Methodology ---- */
+  .methodology {
+    padding: 16px;
+  }
+
+  .methodology h3 {
+    font-size: 14px;
+  }
+
+  .methodology p,
+  .methodology li {
+    font-size: 12px;
+  }
+
+  /* ---- Disclaimer ---- */
+  .disclaimer {
+    font-size: 11px;
+    padding: 12px;
+  }
+}
+
+/* Extra small phones */
+@media (max-width: 380px) {
+  .toggle-group-btn {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .stat-value {
+    font-size: 1.1rem !important;
+  }
+
+  .pricing-amount {
+    font-size: 24px;
+  }
+}
