@@ -1,5 +1,5 @@
 // ============================================================
-// CryptoLens V2 — Type Definitions
+// CoinDebrief V2 — Type Definitions
 // ============================================================
 
 export interface Coin {

@@ -1,5 +1,5 @@
 // ============================================================
-// CryptoLens — API Layer (Free APIs, no keys required)
+// CoinDebrief — API Layer (Free APIs, no keys required)
 // ============================================================
 
 import { Coin, NewsArticle } from './types';

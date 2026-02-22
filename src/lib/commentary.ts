@@ -1,5 +1,5 @@
 // ============================================================
-// CryptoLens V2 — Commentary & Editorial Voice Engine
+// CoinDebrief V2 — Commentary & Editorial Voice Engine
 // "A cynical, battle-hardened analyst"
 // ============================================================
 

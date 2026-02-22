@@ -1,5 +1,5 @@
 // ============================================================
-// CryptoLens V2 — Scoring & Recommendation Engine
+// CoinDebrief V2 — Scoring & Recommendation Engine
 // ============================================================
 
 import { Coin, NewsArticle, ScoredNewsArticle, ScreenerRow, Recommendation, Sentiment, RiskRating, CoinCategory } from './types';

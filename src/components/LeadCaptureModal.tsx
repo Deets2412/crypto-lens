@@ -18,9 +18,9 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
         e.preventDefault();
         if (!email) return;
         // Store to localStorage as a demo
-        const existing = JSON.parse(localStorage.getItem('cryptolens_leads') || '[]');
+        const existing = JSON.parse(localStorage.getItem('coindebrief_leads') || '[]');
         existing.push({ email, subscribedAt: new Date().toISOString() });
-        localStorage.setItem('cryptolens_leads', JSON.stringify(existing));
+        localStorage.setItem('coindebrief_leads', JSON.stringify(existing));
         setSubmitted(true);
     };
 

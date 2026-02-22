@@ -379,7 +379,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="disclaimer" style={{ marginTop: 32 }}>
-        ⚠️ This is not financial advice. CryptoLens provides data-driven signals
+        ⚠️ This is not financial advice. CoinDebrief provides data-driven signals
         for educational purposes only. Always do your own research before
         investing.
       </div>
