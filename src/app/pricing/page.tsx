@@ -7,11 +7,11 @@ import { LeadCaptureModal } from '@/components/LeadCaptureModal';
 const tiers = [
     {
         name: 'Normie',
-        price: '$0',
-        period: 'forever, baby',
+        price: '$5',
+        period: '/month after 14-day free trial',
         icon: Eye,
         description:
-            'You\'re "just looking." Sure. That\'s what they all say before they\'re refreshing charts at 3am in their underwear.',
+            'Two weeks free to pretend you\'re "just looking." Then $5/mo to keep the lights on. That\'s less than a bad coffee. You\'ll survive.',
         gradient: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
         features: [
             { text: 'Top 10 Blue Chips (the boring ones)', included: true },
@@ -143,7 +143,7 @@ export default function PricingPage() {
                                 }}
                             >
                                 {tier.name === 'Normie'
-                                    ? 'Start Lurking (Free)'
+                                    ? 'Start 14-Day Free Trial'
                                     : tier.name === 'Night Owl'
                                         ? 'Get the Briefing ☕'
                                         : 'Get Coin Sense 🧠'}
