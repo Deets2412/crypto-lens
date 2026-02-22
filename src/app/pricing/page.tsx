@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, X, Zap, Eye, Crown } from 'lucide-react';
+import { Check, X, Zap, Eye, Crown, Moon, BriefcaseBusiness } from 'lucide-react';
 import { LeadCaptureModal } from '@/components/LeadCaptureModal';
 
 const tiers = [
@@ -10,38 +10,57 @@ const tiers = [
         price: '$0',
         period: 'forever, baby',
         icon: Eye,
-        description: 'You\'re "just looking." Sure you are. That\'s what they all say before they\'re refreshing charts at 3am.',
+        description:
+            'You\'re "just looking." Sure. That\'s what they all say before they\'re refreshing charts at 3am in their underwear.',
         gradient: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
         features: [
             { text: 'Top 10 Blue Chips (the boring ones)', included: true },
             { text: 'Basic Sentiment — "vibes-based analysis"', included: true },
             { text: 'Market Overview Dashboard', included: true },
             { text: 'News Headlines (just the clickbait)', included: true },
+            { text: 'Daily Overnight Briefing email', included: false },
             { text: 'The Casino — where dreams go to die', included: false },
-            { text: 'BS Meter — corp speak translator', included: false },
-            { text: 'Real Talk De-Coder', included: false },
-            { text: 'Investment Screener', included: false },
-            { text: 'Overnight Intelligence Briefing', included: false },
+            { text: 'BS Meter & Real Talk De-Coder', included: false },
+            { text: 'Portfolio X-Ray analysis', included: false },
+        ],
+    },
+    {
+        name: 'Night Owl',
+        price: '$15',
+        period: '/month (cheaper than your morning coffee habit)',
+        icon: Moon,
+        description:
+            'Every morning, a crispy email lands in your inbox: the top 10 overnight picks with full analysis. You sip coffee. You feel informed. You make slightly less bad decisions.',
+        gradient: 'linear-gradient(135deg, #f59e0b, #f97316)',
+        popular: true,
+        features: [
+            { text: 'Everything the Normies get', included: true },
+            { text: '📧 Daily Overnight Briefing email', included: true },
+            { text: 'Top 10 picks with full analysis & reasoning', included: true },
+            { text: 'The Casino — full access to the chaos 🎰', included: true },
+            { text: 'BS Meter — know exactly how much they\'re lying', included: true },
+            { text: 'Real Talk De-Coder — jargon annihilator', included: true },
+            { text: 'Investment Screener — for "research"', included: true },
+            { text: 'Portfolio X-Ray analysis', included: false },
         ],
     },
     {
         name: 'Coin Sense',
         price: '$29',
         period: '/month (less than your last rug pull)',
-        icon: Zap,
-        description: 'You\'ve accepted who you are. Might as well have good data while you YOLO your savings into coins you found on TikTok.',
-        gradient: 'linear-gradient(135deg, #f59e0b, #f97316)',
-        popular: true,
+        icon: BriefcaseBusiness,
+        description:
+            'Drop in your actual crypto portfolio and we\'ll roast — sorry, "analyse" — every single position. Plus everything below. Knowledge is power. Also pain.',
+        gradient: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
         features: [
-            { text: 'Everything the Normies get', included: true },
-            { text: 'Full Blue Chip Rankings — all of them', included: true },
-            { text: 'The Casino — full degen access 🎰', included: true },
-            { text: 'BS Meter — know exactly how much they\'re lying', included: true },
-            { text: 'Real Talk De-Coder — corporate jargon annihilator', included: true },
-            { text: 'Investment Screener — for "research"', included: true },
-            { text: 'Full News Sentiment — every last bearish tweet', included: true },
-            { text: 'Overnight Intelligence Briefing ☕', included: true },
-            { text: 'Priority support (we\'ll answer faster, not better)', included: true },
+            { text: 'Everything Night Owls get', included: true },
+            { text: '🔍 Portfolio X-Ray — drop in your holdings', included: true },
+            { text: 'Position-by-position roast... analysis', included: true },
+            { text: 'Risk concentration warnings', included: true },
+            { text: 'Rebalancing suggestions (we have opinions)', included: true },
+            { text: 'Portfolio BS Score — how degen is your bag?', included: true },
+            { text: 'Priority support (faster replies, same sass)', included: true },
+            { text: 'Early access to new features', included: true },
         ],
     },
 ];
@@ -54,13 +73,13 @@ export default function PricingPage() {
             <div className="page-header animate-fade-in-up" style={{ textAlign: 'center' }}>
                 <h1 className="page-title">Pick Your Fighter</h1>
                 <p className="page-subtitle" style={{ maxWidth: 600, margin: '0 auto' }}>
-                    Look, you&apos;re already here. You&apos;re already checking crypto prices
-                    when you should be working. The only question is whether you want
-                    the training wheels on or off.
+                    Look, you&apos;re already here. You&apos;re already checking crypto
+                    prices when you should be working. The only question is how
+                    much hand-holding you want while you do it.
                 </p>
             </div>
 
-            <div className="pricing-grid" style={{ maxWidth: 800, margin: '32px auto 0' }}>
+            <div className="pricing-grid">
                 {tiers.map((tier, index) => {
                     const Icon = tier.icon;
                     return (
@@ -71,7 +90,7 @@ export default function PricingPage() {
                         >
                             {tier.popular && (
                                 <div className="pricing-popular-badge">
-                                    <Crown size={12} /> You Know You Want This
+                                    <Crown size={12} /> Most Popular (Obviously)
                                 </div>
                             )}
 
@@ -108,14 +127,26 @@ export default function PricingPage() {
 
                             <button
                                 className={`pricing-cta ${tier.popular ? 'pricing-cta--popular' : ''}`}
-                                style={{ background: tier.popular ? tier.gradient : undefined }}
+                                style={{
+                                    background: tier.popular
+                                        ? tier.gradient
+                                        : tier.name === 'Coin Sense'
+                                            ? tier.gradient
+                                            : undefined,
+                                    color: tier.name !== 'Normie' ? 'white' : undefined,
+                                    border: tier.name !== 'Normie' ? 'none' : undefined,
+                                }}
                                 onClick={() => {
                                     if (tier.name === 'Normie') {
                                         setShowLeadModal(true);
                                     }
                                 }}
                             >
-                                {tier.name === 'Normie' ? 'Start Lurking (Free)' : 'Get Coin Sense'}
+                                {tier.name === 'Normie'
+                                    ? 'Start Lurking (Free)'
+                                    : tier.name === 'Night Owl'
+                                        ? 'Get the Briefing ☕'
+                                        : 'Get Coin Sense 🧠'}
                             </button>
                         </div>
                     );
@@ -124,7 +155,7 @@ export default function PricingPage() {
 
             {/* FAQ */}
             <div className="methodology" style={{ marginTop: 48, textAlign: 'center' }}>
-                <h3>🤔 FAQ: &quot;Is this real money?&quot;</h3>
+                <h3>🤔 &quot;Is this real money?&quot;</h3>
                 <p style={{ maxWidth: 520, margin: '8px auto 0' }}>
                     Nope. This is a demo. The data is real, the scores are real,
                     the sarcasm is very real — but the payment buttons just sit there
