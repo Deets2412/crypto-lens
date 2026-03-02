@@ -1,22 +1,22 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { createClient } from './supabase';
 
 // ============================================================
-// CoinDebrief — Auth & Subscription System
+// CoinDebrief — Auth & Subscription System (Supabase)
 // ============================================================
 
 export type UserTier = 'normie' | 'night_owl' | 'coin_sense';
 
 const TIER_HIERARCHY: UserTier[] = ['normie', 'night_owl', 'coin_sense'];
 const TRIAL_DAYS = 14;
-const STORAGE_KEY = 'coindebrief_auth';
 
 // Default admin credentials
 const ADMIN_EMAIL = 'admin@coindebrief.com';
-const ADMIN_PASSWORD = 'admin123';
 
 export interface User {
+    id: string; // Add Supabase UUID
     email: string;
     tier: UserTier;
     trialStartDate: string; // ISO date string
@@ -30,10 +30,10 @@ export interface AuthState {
     isAdmin: boolean;
     isTrialActive: boolean;
     trialDaysRemaining: number;
-    login: (email: string, password: string) => { success: boolean; error?: string };
-    signup: (email: string, password: string, tier?: UserTier) => { success: boolean; error?: string };
-    logout: () => void;
-    upgradeTier: (tier: UserTier) => void;
+    login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+    signup: (email: string, password: string, tier?: UserTier) => Promise<{ success: boolean; error?: string }>;
+    logout: () => Promise<void>;
+    upgradeTier: (tier: UserTier) => Promise<void>;
     hasAccess: (requiredTier: UserTier) => boolean;
 }
 
@@ -43,26 +43,15 @@ const AuthContext = createContext<AuthState>({
     isAdmin: false,
     isTrialActive: false,
     trialDaysRemaining: 0,
-    login: () => ({ success: false }),
-    signup: () => ({ success: false }),
-    logout: () => { },
-    upgradeTier: () => { },
+    login: async () => ({ success: false }),
+    signup: async () => ({ success: false }),
+    logout: async () => { },
+    upgradeTier: async () => { },
     hasAccess: () => false,
 });
 
 export function useAuth() {
     return useContext(AuthContext);
-}
-
-// Simple hash simulation for demo passwords
-function simpleHash(str: string): string {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash |= 0;
-    }
-    return 'hash_' + Math.abs(hash).toString(36);
 }
 
 function getTrialDaysRemaining(trialStartDate: string): number {
@@ -72,117 +61,138 @@ function getTrialDaysRemaining(trialStartDate: string): number {
     return Math.max(0, TRIAL_DAYS - elapsed);
 }
 
-interface StoredData {
-    users: Record<string, { user: User; passwordHash: string }>;
-    currentUser: string | null; // email of logged-in user
-}
-
-function loadStorage(): StoredData {
-    if (typeof window === 'undefined') return { users: {}, currentUser: null };
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-            const data = JSON.parse(raw) as StoredData;
-            // Ensure admin account always exists
-            seedAdmin(data);
-            return data;
-        }
-    } catch { }
-    const fresh: StoredData = { users: {}, currentUser: null };
-    seedAdmin(fresh);
-    return fresh;
-}
-
-function seedAdmin(data: StoredData) {
-    if (!data.users[ADMIN_EMAIL]) {
-        data.users[ADMIN_EMAIL] = {
-            user: {
-                email: ADMIN_EMAIL,
-                tier: 'coin_sense',
-                trialStartDate: new Date().toISOString(),
-                createdAt: new Date().toISOString(),
-                isAdmin: true,
-            },
-            passwordHash: simpleHash(ADMIN_PASSWORD),
-        };
-    }
-}
-
-function saveStorage(data: StoredData) {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loaded, setLoaded] = useState(false);
 
-    // Load session on mount + seed admin
+    // We create a supabase client inside the provider
+    const supabase = createClient();
+
+    const fetchProfile = useCallback(async (email: string) => {
+        const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', email)
+            .single();
+
+        if (error || !data) {
+            console.error('Error fetching profile:', error);
+            return null;
+        }
+
+        return {
+            id: data.id,
+            email: data.email,
+            tier: data.tier as UserTier,
+            trialStartDate: data.trial_start_date,
+            createdAt: data.created_at,
+            isAdmin: data.email === ADMIN_EMAIL,
+        } as User;
+    }, [supabase]);
+
     useEffect(() => {
-        const data = loadStorage();
-        saveStorage(data); // persist the seeded admin
-        if (data.currentUser && data.users[data.currentUser]) {
-            setUser(data.users[data.currentUser].user);
-        }
-        setLoaded(true);
-    }, []);
+        const initSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session?.user?.email) {
+                const profile = await fetchProfile(session.user.email);
+                setUser(profile);
+            }
+            setLoaded(true);
 
-    const login = useCallback((email: string, password: string): { success: boolean; error?: string } => {
-        const data = loadStorage();
-        const normalizedEmail = email.toLowerCase().trim();
-        const entry = data.users[normalizedEmail];
-        if (!entry) {
-            return { success: false, error: 'No account found with this email.' };
-        }
-        if (entry.passwordHash !== simpleHash(password)) {
-            return { success: false, error: 'Incorrect password.' };
-        }
-        data.currentUser = normalizedEmail;
-        saveStorage(data);
-        setUser(entry.user);
-        return { success: true };
-    }, []);
+            // Listen for auth changes
+            const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+                if (event === 'SIGNED_IN' && session?.user?.email) {
+                    const profile = await fetchProfile(session.user.email);
+                    setUser(profile);
+                } else if (event === 'SIGNED_OUT') {
+                    setUser(null);
+                }
+            });
 
-    const signup = useCallback((email: string, password: string, tier: UserTier = 'normie'): { success: boolean; error?: string } => {
-        const data = loadStorage();
-        const normalizedEmail = email.toLowerCase().trim();
-        if (data.users[normalizedEmail]) {
-            return { success: false, error: 'An account with this email already exists.' };
-        }
-        const newUser: User = {
-            email: normalizedEmail,
-            tier,
-            trialStartDate: new Date().toISOString(),
-            createdAt: new Date().toISOString(),
+            return () => {
+                subscription.unsubscribe();
+            };
         };
-        data.users[normalizedEmail] = {
-            user: newUser,
-            passwordHash: simpleHash(password),
-        };
-        data.currentUser = normalizedEmail;
-        saveStorage(data);
-        setUser(newUser);
-        return { success: true };
-    }, []);
 
-    const logout = useCallback(() => {
-        const data = loadStorage();
-        data.currentUser = null;
-        saveStorage(data);
+        if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+            initSession();
+        } else {
+            console.warn('Supabase keys not found. Auth will not work until .env.local is configured.');
+            setLoaded(true);
+        }
+    }, [supabase, fetchProfile]);
+
+    const login = useCallback(async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+
+        if (error) {
+            return { success: false, error: error.message };
+        }
+
+        return { success: true };
+    }, [supabase]);
+
+    const signup = useCallback(async (email: string, password: string, tier: UserTier = 'normie'): Promise<{ success: boolean; error?: string }> => {
+        // 1. Sign up with Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+            email,
+            password,
+        });
+
+        if (authError) {
+            console.error('Supabase Auth Error:', authError);
+            return { success: false, error: authError.message };
+        }
+
+        if (!authData.user) {
+            console.error('Signup returned no user object:', authData);
+            return { success: false, error: 'Signup failed. Please check your email configuration.' };
+        }
+
+        if (authData.user) {
+            // 2. Create the user profile in our public.users table
+            const { error: dbError } = await supabase
+                .from('users')
+                .insert([
+                    {
+                        id: authData.user.id,
+                        email: email.toLowerCase(),
+                        tier: tier,
+                    }
+                ]);
+
+            if (dbError) {
+                console.error('Error creating profile:', dbError);
+                // Return success anyway, as the auth succeeded, but profile creation failed. 
+                // We should ideally clean this up or handle better in a production app.
+            }
+        }
+
+        return { success: true };
+    }, [supabase]);
+
+    const logout = useCallback(async () => {
+        await supabase.auth.signOut();
         setUser(null);
-    }, []);
+    }, [supabase]);
 
-    const upgradeTier = useCallback((tier: UserTier) => {
+    const upgradeTier = useCallback(async (tier: UserTier) => {
         if (!user) return;
-        const data = loadStorage();
-        const entry = data.users[user.email];
-        if (entry) {
-            entry.user.tier = tier;
-            data.users[user.email] = entry;
-            saveStorage(data);
-            setUser({ ...entry.user });
+
+        const { error } = await supabase
+            .from('users')
+            .update({ tier })
+            .eq('email', user.email);
+
+        if (!error) {
+            setUser({ ...user, tier });
+        } else {
+            console.error('Failed to update tier:', error);
         }
-    }, [user]);
+    }, [user, supabase]);
 
     const hasAccess = useCallback((requiredTier: UserTier): boolean => {
         if (!user) return false;
@@ -205,7 +215,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const isTrialActive = user?.tier === 'normie' && !user?.isAdmin && getTrialDaysRemaining(user.trialStartDate) > 0;
     const trialDaysRemaining = user ? getTrialDaysRemaining(user.trialStartDate) : 0;
 
-    // Don't render children until we've loaded from localStorage to avoid hydration flicker
+    // Don't render children until we've loaded to avoid hydration flicker
     if (!loaded) {
         return null;
     }

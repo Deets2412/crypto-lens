@@ -31,7 +31,7 @@ export default function SignupPage() {
         return null;
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setLoading(true);
@@ -54,7 +54,7 @@ export default function SignupPage() {
             return;
         }
 
-        const result = signup(email, password, selectedTier);
+        const result = await signup(email, password, selectedTier);
         if (result.success) {
             router.push('/');
         } else {
