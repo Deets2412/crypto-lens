@@ -36,8 +36,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const router = useRouter();
     const { user, isAdmin, isTrialActive, trialDaysRemaining, logout, hasAccess } = useAuth();
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         router.push('/login');
     };
 
