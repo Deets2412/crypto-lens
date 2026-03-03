@@ -14,6 +14,8 @@ import {
     Crown,
     Clock,
     Crosshair,
+    Settings,
+    ShieldCheck,
 } from 'lucide-react';
 import { TierBadge } from './TierBadge';
 import { useAuth } from '@/lib/auth';
@@ -25,6 +27,7 @@ const navItems = [
     { href: '/casino', label: 'The Casino', icon: Flame, requiredTier: 'night_owl' as const },
     { href: '/screener', label: 'Screener', icon: Filter, requiredTier: 'night_owl' as const },
     { href: '/portfolio', label: 'Portfolio X-Ray', icon: Crosshair, requiredTier: 'coin_sense' as const },
+    { href: '/settings', label: 'Settings', icon: Settings },
     { href: '/pricing', label: 'Pricing', icon: CreditCard },
 ];
 
@@ -130,6 +133,21 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                         );
                     })}
                 </nav>
+
+                {/* Admin link — only visible to admins */}
+                {isAdmin && (
+                    <nav style={{ marginTop: 8, padding: '0 12px' }}>
+                        <Link
+                            href="/admin"
+                            className={`sidebar-nav-item ${pathname === '/admin' ? 'active' : ''}`}
+                            onClick={onClose}
+                            style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 12 }}
+                        >
+                            <ShieldCheck className="nav-icon" size={20} />
+                            <span style={{ flex: 1 }}>Admin</span>
+                        </Link>
+                    </nav>
+                )}
 
                 <div className="sidebar-footer">
                     <button className="sidebar-logout-btn" onClick={handleLogout}>
