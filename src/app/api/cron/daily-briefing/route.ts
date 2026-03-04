@@ -10,6 +10,7 @@ import { Resend } from 'resend';
 import { fetchTopCoins, fetchNews } from '@/lib/api';
 import { generateBriefing } from '@/lib/briefing';
 import { renderBriefingEmail } from '@/lib/email-template';
+import { generateAIMarketSummary, generateAIPortfolioInsight } from '@/lib/ai-briefing';
 import { PortfolioHolding } from '@/lib/types';
 
 // Use service role client for cron (bypasses RLS)
@@ -77,6 +78,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch market data' }, { status: 500 });
     }
 
+    // 3b. Generate AI market summary once for all emails (shared)
+    const baseBriefing = generateBriefing(coins, news);
+    const aiMarketSummary = await generateAIMarketSummary(baseBriefing);
+
     // 4. Send emails
     let sentCount = 0;
     let errorCount = 0;
@@ -111,6 +116,20 @@ export async function GET(request: NextRequest) {
 
         // Generate personalized briefing
         const briefing = generateBriefing(coins, news, holdings);
+
+        // Inject AI market summary if available
+        if (aiMarketSummary) {
+          briefing.aiMarketSummary = aiMarketSummary;
+        }
+
+        // Generate AI portfolio insight for coin_sense users
+        if (profile.tier === 'coin_sense' && briefing.portfolioSummary) {
+          const aiPortfolioInsight = await generateAIPortfolioInsight(briefing.portfolioSummary);
+          if (aiPortfolioInsight) {
+            briefing.aiPortfolioInsight = aiPortfolioInsight;
+          }
+        }
+
         const html = renderBriefingEmail(briefing, appUrl);
 
         // Send via Resend

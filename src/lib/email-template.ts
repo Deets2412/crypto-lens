@@ -32,7 +32,31 @@ function changeSign(val: number): string {
 }
 
 export function renderBriefingEmail(data: BriefingData, appUrl: string): string {
-  const { marketOverview, topMovers, topLosers, portfolioSummary, newsHighlights, signOff } = data;
+  const { marketOverview, topMovers, topLosers, portfolioSummary, newsHighlights, signOff, aiMarketSummary, aiPortfolioInsight } = data;
+
+  // AI Market Summary section (powered by Perplexity Sonar)
+  let aiSummarySection = '';
+  if (aiMarketSummary) {
+    aiSummarySection = `
+    <!-- AI Market Intelligence -->
+    <tr>
+      <td style="padding:0 24px 24px;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#1a1a3e,#1e1a3e);border-radius:12px;border:1px solid rgba(139,92,246,0.2);">
+          <tr>
+            <td style="padding:20px 24px 8px;">
+              <h2 style="margin:0;font-size:16px;color:#a78bfa;font-weight:600;">🧠 AI Intelligence</h2>
+              <span style="font-size:10px;color:#6b7280;letter-spacing:0.5px;">POWERED BY PERPLEXITY SONAR</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:8px 24px 20px;">
+              <p style="margin:0;color:#d1d5db;font-size:14px;line-height:1.65;">${aiMarketSummary}</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>`;
+  }
 
   // Portfolio section (only for Coin Sense users with holdings)
   let portfolioSection = '';
@@ -70,7 +94,19 @@ export function renderBriefingEmail(data: BriefingData, appUrl: string): string 
             <td style="padding:12px 24px 20px;">
               <p style="margin:0;color:#9ca3af;font-size:13px;font-style:italic;">${portfolioSummary.verdict}</p>
             </td>
-          </tr>
+          </tr>${aiPortfolioInsight ? `
+          <tr>
+            <td style="padding:0 24px 20px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:rgba(139,92,246,0.08);border-radius:8px;border:1px solid rgba(139,92,246,0.15);">
+                <tr>
+                  <td style="padding:12px 16px;">
+                    <span style="font-size:10px;color:#a78bfa;text-transform:uppercase;letter-spacing:0.5px;">🧠 AI Insight</span>
+                    <p style="margin:6px 0 0;color:#d1d5db;font-size:13px;line-height:1.5;">${aiPortfolioInsight}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>` : ''}
         </table>
       </td>
     </tr>`;
@@ -201,6 +237,8 @@ export function renderBriefingEmail(data: BriefingData, appUrl: string): string 
               </table>
             </td>
           </tr>
+
+          ${aiSummarySection}
 
           ${portfolioSection}
 

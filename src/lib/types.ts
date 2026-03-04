@@ -186,6 +186,8 @@ export interface BriefingData {
   };
   newsHighlights: BriefingNewsItem[];
   signOff: string;            // sardonic sign-off
+  aiMarketSummary?: string;   // AI-generated market summary (Sonar)
+  aiPortfolioInsight?: string; // AI-generated portfolio insight (Sonar)
 }
 
 export interface BriefingMover {
@@ -209,4 +211,51 @@ export interface EmailPreferences {
   dailyBriefing: boolean;
   briefingTime: string;       // e.g. '06:00' UTC
   includePortfolio: boolean;
+}
+
+// ============================================================
+// Phase 4 — AI Intelligence Types
+// ============================================================
+
+export interface AIQueryRequest {
+  message: string;
+  queryType?: string;
+  context?: {
+    portfolio?: string;
+  };
+}
+
+export interface AIQueryResponse {
+  response: string;
+  citations: string[];
+  queryType: string;
+  model: string;
+  usage: {
+    queriesUsed: number;
+    queriesLimit: number;
+    queriesRemaining: number;
+    tokensUsed: number;
+  };
+  meta?: {
+    hint?: string;
+  };
+}
+
+export interface AIUsageResponse {
+  tier: string;
+  model: string;
+  features: string[];
+  usage: {
+    queriesUsed: number;
+    queriesLimit: number;
+    queriesRemaining: number;
+    totalTokensToday: number;
+  };
+  statusMessage: string;
+  recentQueries: {
+    id: string;
+    query_type: string;
+    user_message: string;
+    created_at: string;
+  }[];
 }

@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [resetMode, setResetMode] = useState(false);
   const { login, isAuthenticated } = useAuth();
   const router = useRouter();
 
@@ -77,13 +78,14 @@ export default function LoginPage() {
     const supabase = createClient();
     const { error } = await supabase.auth.resetPasswordForEmail(
       email.toLowerCase().trim(),
-      { redirectTo: `${window.location.origin}/auth/callback?next=/login` }
+      { redirectTo: `${window.location.origin}/auth/callback?next=/reset-password` }
     );
 
     if (error) {
       setError(error.message);
     } else {
       setMagicLinkSent(true);
+      setResetMode(true);
     }
     setLoading(false);
   };
@@ -99,7 +101,10 @@ export default function LoginPage() {
             <h1>Check Your Email</h1>
             <p style={{ marginTop: 12, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
               We sent a link to <strong style={{ color: 'var(--text-primary)' }}>{email}</strong>.
-              Click it to sign in. No password needed.
+              {resetMode
+                ? ' Click it to reset your password.'
+                : ' Click it to sign in. No password needed.'
+              }
             </p>
             <button
               className="auth-submit"
