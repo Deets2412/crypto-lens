@@ -186,6 +186,8 @@ export interface BriefingData {
   };
   newsHighlights: BriefingNewsItem[];
   signOff: string;            // sardonic sign-off
+  aiMarketSummary?: string;   // AI-generated market summary (Sonar)
+  aiPortfolioInsight?: string; // AI-generated portfolio insight (Sonar)
 }
 
 export interface BriefingMover {
