@@ -13,6 +13,7 @@ import {
     LogOut,
     Crown,
     Clock,
+    Crosshair,
 } from 'lucide-react';
 import { TierBadge } from './TierBadge';
 import { useAuth } from '@/lib/auth';
@@ -23,6 +24,7 @@ const navItems = [
     { href: '/recommendations', label: 'Blue Chips', icon: Shield },
     { href: '/casino', label: 'The Casino', icon: Flame, requiredTier: 'night_owl' as const },
     { href: '/screener', label: 'Screener', icon: Filter, requiredTier: 'night_owl' as const },
+    { href: '/portfolio', label: 'Portfolio X-Ray', icon: Crosshair, requiredTier: 'coin_sense' as const },
     { href: '/pricing', label: 'Pricing', icon: CreditCard },
 ];
 

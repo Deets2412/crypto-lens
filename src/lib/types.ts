@@ -103,3 +103,110 @@ export interface MarketOverview {
   btcDominance: number;
   activeCryptos: number;
 }
+
+// ============================================================
+// Phase 2 — Portfolio X-Ray Types
+// ============================================================
+
+export interface PortfolioHolding {
+  id: string;
+  userId: string;
+  coinId: string;           // CoinGecko ID (e.g. 'bitcoin')
+  symbol: string;
+  name: string;
+  amount: number;           // how many coins
+  buyPrice: number;         // average buy price in USD
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PortfolioPosition extends PortfolioHolding {
+  currentPrice: number;
+  currentValue: number;     // amount * currentPrice
+  costBasis: number;        // amount * buyPrice
+  pnl: number;              // currentValue - costBasis
+  pnlPercent: number;       // (pnl / costBasis) * 100
+  allocation: number;       // % of total portfolio
+  category: CoinCategory;
+  compositeScore: number;
+  bsMeterScore: number;
+  riskRating: RiskRating;
+}
+
+export interface PortfolioAnalysis {
+  positions: PortfolioPosition[];
+  totalValue: number;
+  totalCostBasis: number;
+  totalPnl: number;
+  totalPnlPercent: number;
+  portfolioBSScore: number;         // weighted average BS score
+  portfolioCompositeScore: number;  // weighted average composite
+  riskConcentration: RiskConcentration;
+  diversificationGrade: string;     // A, B, C, D, F
+  rebalancingSuggestions: RebalancingSuggestion[];
+  topRisk: string;                  // sardonic one-liner about biggest risk
+  overallVerdict: string;           // sardonic overall assessment
+}
+
+export interface RiskConcentration {
+  topHoldingPercent: number;        // % in largest position
+  top3HoldingPercent: number;       // % in top 3 positions
+  casinoPercent: number;            // % in casino-category coins
+  blueChipPercent: number;          // % in blue-chip coins
+  singlePointOfFailure: boolean;    // any position > 40%?
+}
+
+export interface RebalancingSuggestion {
+  type: 'reduce' | 'increase' | 'exit' | 'diversify';
+  coinName: string;
+  reason: string;    // sardonic reason
+}
+
+// ============================================================
+// Phase 2 — Daily Email Briefing Types
+// ============================================================
+
+export interface BriefingData {
+  date: string;
+  marketOverview: {
+    totalMarketCap: number;
+    btcDominance: number;
+    totalVolume: number;
+    marketMood: string;       // sardonic one-liner
+  };
+  topMovers: BriefingMover[];
+  topLosers: BriefingMover[];
+  portfolioSummary?: {
+    totalValue: number;
+    dayChange: number;
+    dayChangePercent: number;
+    worstPerformer: string;
+    bestPerformer: string;
+    verdict: string;          // sardonic summary
+  };
+  newsHighlights: BriefingNewsItem[];
+  signOff: string;            // sardonic sign-off
+}
+
+export interface BriefingMover {
+  name: string;
+  symbol: string;
+  price: number;
+  change24h: number;
+  quip: string;               // sardonic one-liner about the move
+}
+
+export interface BriefingNewsItem {
+  title: string;
+  source: string;
+  sentiment: Sentiment;
+  url: string;
+  quip: string;               // sardonic take
+}
+
+export interface EmailPreferences {
+  userId: string;
+  dailyBriefing: boolean;
+  briefingTime: string;       // e.g. '06:00' UTC
+  includePortfolio: boolean;
+}
