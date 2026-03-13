@@ -27,23 +27,26 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Refresh session
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Protected routes — redirect to login if not authenticated
-  const publicPaths = ['/login', '/signup', '/pricing', '/auth/callback', '/api/cron', '/reset-password']
-  const isPublicPath = publicPaths.some(path => request.nextUrl.pathname.startsWith(path))
+  // Public paths that don't require authentication
+  const publicPaths = [
+    '/',
+    '/login',
+    '/signup',
+    '/auth/callback',
+    '/api/auth',
+    '/api/stripe/webhook',
+  ]
+
+  const isPublicPath = publicPaths.some(path =>
+    request.nextUrl.pathname === path ||
+    request.nextUrl.pathname.startsWith(path + '/')
+  )
 
   if (!user && !isPublicPath) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
-    return NextResponse.redirect(url)
-  }
-
-  // If authenticated user tries to access login/signup, redirect to dashboard
-  if (user && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup')) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/'
     return NextResponse.redirect(url)
   }
 
@@ -52,6 +55,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
