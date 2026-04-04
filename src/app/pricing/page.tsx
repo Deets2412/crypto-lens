@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, X, Eye, Crown, Moon, BriefcaseBusiness } from 'lucide-react';
 import { useAuth, UserTier } from '@/lib/auth';
@@ -82,16 +83,46 @@ export default function PricingPage() {
     const router = useRouter();
     const { user, isAuthenticated, upgradeTier, isAdmin } = useAuth();
 
-    const handleTierAction = (tier: typeof tiers[0]) => {
+    const [loadingTier, setLoadingTier] = useState<UserTier | null>(null);
+
+    const handleTierAction = async (tier: typeof tiers[0]) => {
         if (!isAuthenticated) {
-            // Not logged in: go to signup with tier pre-selected
             router.push(`/signup?tier=${tier.tier}`);
-        } else if (user?.tier === tier.tier) {
-            // Already on this tier
             return;
-        } else {
-            // Simulate upgrade (in production this would go to Stripe)
-            upgradeTier(tier.tier);
+        }
+
+        if (user?.tier === tier.tier) {
+            return;
+        }
+
+        try {
+            setLoadingTier(tier.tier);
+            const response = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    tierId: tier.tier,
+                    email: user?.email,
+                    userId: user?.id
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.url) {
+                // Redirect to Stripe checkout
+                window.location.href = data.url;
+            } else {
+                console.error('Failed to create checkout session:', data);
+                alert('Checkout failed. Please ensure setup is complete.');
+            }
+        } catch (error) {
+            console.error('Error starting checkout:', error);
+            alert('An error occurred during checkout.');
+        } finally {
+            setLoadingTier(null);
         }
     };
 
