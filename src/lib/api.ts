@@ -52,7 +52,8 @@ export async function fetchNews(limit: number = 50): Promise<NewsArticle[]> {
         );
         if (!res.ok) throw new Error(`CryptoCompare error: ${res.status}`);
         const data = await res.json();
-        const articles: NewsArticle[] = (data.Data || []).slice(0, limit).map(
+        const rawArticles = Array.isArray(data.Data) ? data.Data : (data.Data?.Data || data.Data?.data || []);
+        const articles: NewsArticle[] = (Array.isArray(rawArticles) ? rawArticles : []).slice(0, limit).map(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (item: any) => ({
                 id: String(item.id),
