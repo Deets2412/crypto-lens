@@ -2,12 +2,15 @@ import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-// Use the service role key so this backend route has full DB access
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+function getSupabase() {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+}
 
 export async function POST(req: Request) {
+    const supabase = getSupabase();
     try {
         const { tierId, email, userId } = await req.json();
 
